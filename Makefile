@@ -17,7 +17,13 @@ ifeq ($(BOARD), iMX28_EVK)
 ARCH = mx28
 endif
 
-all: build_prep gen_bootstream
+all: elftosb build_prep gen_bootstream
+
+ELFTOSB_DIR = elftosb-10.12.01
+ELFTOSB = $(ELFTOSB_DIR)/bld/linux/elftosb
+
+elftosb: $(ELFTOSB)
+	make -j8 -C $(ELFTOSB_DIR)
 
 build_prep:
 
@@ -27,13 +33,13 @@ gen_bootstream: linux_prep boot_prep power_prep linux.db uboot.db linux_prebuilt
 ifeq "$(DFT_IMAGE)" "$(wildcard $(DFT_IMAGE))"
 	@echo "by using the rootfs/boot/zImage"
 	sed -i 's,[^ *]zImage.*;,\tzImage="$(DFT_IMAGE)";,' linux.db
-	elftosb -z -c ./linux.db -o i$(ARCH)_linux.sb
+	$(ELFTOSB) -z -c ./linux.db -o i$(ARCH)_linux.sb
 	#@echo "by using the rootfs/boot/u-boot"
 	#sed -i 's,[^ *]image.*;,\timage="$(DFT_UBOOT)";,' uboot.db
 	#elftosb -z -c ./uboot.db -o i$(ARCH)_uboot.sb
 else
 	@echo "by using the pre-built kernel"
-	elftosb -z -c ./linux_prebuilt.db -o i$(ARCH)_linux.sb
+	$(ELFTOSB) -z -c ./linux_prebuilt.db -o i$(ARCH)_linux.sb
 	#@echo "generating U-Boot boot stream image"
 	#elftosb -z -c ./uboot_prebuilt.db -o i$(ARCH)_uboot.sb
 endif
@@ -63,7 +69,7 @@ boot_prep:
 
 updater: linux_prep boot_prep power_prep
 	@echo "Build updater firmware"
-	elftosb -z -c ./updater_prebuilt.db -o updater.sb
+	$(ELFTOSB) -z -c ./updater_prebuilt.db -o updater.sb
 
 linux_prep:
 ifneq "$(CMDLINE1)" ""
