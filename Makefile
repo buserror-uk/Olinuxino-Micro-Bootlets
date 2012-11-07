@@ -22,8 +22,10 @@ all: elftosb build_prep gen_bootstream
 ELFTOSB_DIR = elftosb-10.12.01
 ELFTOSB = $(ELFTOSB_DIR)/bld/linux/elftosb
 
-elftosb: $(ELFTOSB)
+$(ELFTOSB):
 	make -j8 -C $(ELFTOSB_DIR)
+
+elftosb: $(ELFTOSB)
 
 build_prep:
 
