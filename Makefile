@@ -50,7 +50,7 @@ endif
 	#work at imx28 platform.
 	rm -f sd_mmc_bootstream.raw
 	dd if=/dev/zero of=sd_mmc_bootstream.raw bs=512 count=4
-	dd if=imx23_linux.sb of=sd_mmc_bootstream.raw ibs=512 seek=4 \
+	dd if=i$(ARCH)_linux.sb of=sd_mmc_bootstream.raw ibs=512 seek=4 \
 	conv=sync,notrunc
 	@echo "To install bootstream onto SD/MMC card, type: sudo dd \
 	if=sd_mmc_bootstream.raw of=/dev/sdXY where X is the correct letter \
